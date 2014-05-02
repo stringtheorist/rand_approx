@@ -21,7 +21,7 @@ int numthreads;
 void print_usage(char **argv)
 {
 	printf("Usage: %s matrix-file matrix-trans-file p q"
-			"sing-vals-file\n", argv[0]);
+			" sing-vals-file numthreads\n", argv[0]);
 }
 
 void print_2darray(FILE *fp, double *mat, int m, int n)
