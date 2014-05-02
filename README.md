@@ -9,7 +9,7 @@ edit makefile to point to your compiler and BLAS and LAPACK libraries
 
 ./make
 
-The main executable is in bin/ and it's usage is given below
+The main executable is in bin/ and its usage is given below
 
 ./main matrix-file matrix-transpose-file p q output-file numthreads
 
