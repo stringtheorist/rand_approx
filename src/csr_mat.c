@@ -24,8 +24,8 @@ csr_mat *csr_mat_create_empty(int n, int nnz)
 	csr_mat *mat = (csr_mat *) malloc(sizeof(csr_mat));
 
 	mat->n = n;
-	mat->ia = (mwIndex *) malloc((n+1)*sizeof(mwIndex));
-	mat->ja = (mwIndex *) malloc(nnz*sizeof(mwIndex));
+	mat->ia = (mw_index *) malloc((n+1)*sizeof(mw_index));
+	mat->ja = (mw_index *) malloc(nnz*sizeof(mw_index));
 	mat->a =  (double *) malloc(nnz*sizeof(double));
 
 	return mat;
@@ -47,8 +47,8 @@ csr_mat *csr_mat_read(const char *filename)
 	fread(&nnz, sizeof(int), 1, fp);
 
 	mat->n = n;
-	mat->ia = (mwIndex *) malloc((mat->n+1)*sizeof(mwIndex));
-	mat->ja = (mwIndex *) malloc(nnz*sizeof(mwIndex));
+	mat->ia = (mw_index *) malloc((mat->n+1)*sizeof(mw_index));
+	mat->ja = (mw_index *) malloc(nnz*sizeof(mw_index));
 	mat->a = (double *) malloc(nnz*sizeof(double));
 
 	fread(mat->ia, sizeof(int), n+1, fp);
@@ -98,8 +98,8 @@ csr_mat *csr_mat_create(const char *filename)
 	}
 
 	mat->n = MAX(maxi, maxj);  // assume matrix is square
-	mat->ia = (mwIndex *) malloc((mat->n+1)*sizeof(mwIndex));
-	mat->ja = (mwIndex *) malloc(nnz*sizeof(mwIndex));
+	mat->ia = (mw_index *) malloc((mat->n+1)*sizeof(mw_index));
+	mat->ja = (mw_index *) malloc(nnz*sizeof(mw_index));
 	mat->a = (double *) malloc(nnz*sizeof(double));
 
 	// set ia pointers
@@ -222,8 +222,8 @@ csr_mat *csr_mat_create_mm(const char *filename)
 	/*Now fill in the corresponding CSRMat structure*/
 	mat->n = N;
 	mat->nnz = nnz;
-	mat->ia = (mwIndex *) malloc(((mat->n) + 1) * sizeof(mwIndex));
-	mat->ja = (mwIndex *) malloc(nnz * sizeof(mwIndex));
+	mat->ia = (mw_index *) malloc(((mat->n) + 1) * sizeof(mw_index));
+	mat->ja = (mw_index *) malloc(nnz * sizeof(mw_index));
 	mat->a = (double *) malloc(nnz * sizeof(double));
 	counts = (int *) calloc(mat->n,  sizeof(int));
 
@@ -264,8 +264,8 @@ void csr_mat_destroy(csr_mat *mat)
 
 void csr_mat_dump(const csr_mat *mat)
 {
-	const mwIndex *ia = mat->ia;
-	const mwIndex *ja = mat->ja;
+	const mw_index *ia = mat->ia;
+	const mw_index *ja = mat->ja;
 	const double *a = mat->a;
 	int i, j;
 
@@ -278,8 +278,8 @@ void csr_mat_dump(const csr_mat *mat)
 
 void csr_mat_mult_vec(const csr_mat *mat, const double *x, double *y)
 {
-	const mwIndex *ia = mat->ia;
-	const mwIndex *ja = mat->ja;
+	const mw_index *ia = mat->ia;
+	const mw_index *ja = mat->ja;
 	const double *a = mat->a;
 	int i, j;
 	double t;
@@ -309,8 +309,8 @@ void CSRMatMultVec_instru(const CSRMat *mat, const double *x, double *y)
 {
 	int numthreads;
 
-	const mwIndex *ia = mat->ia;
-	const mwIndex *ja = mat->ja;
+	const mw_index *ia = mat->ia;
+	const mw_index *ja = mat->ja;
 	const double *a = mat->a;
 	int i, j;
 	double t;
@@ -357,10 +357,10 @@ void CSRMatMultVec_instru(const CSRMat *mat, const double *x, double *y)
 void csr_mat_trans(csr_mat *ain, csr_mat *aout)
 {
     int i, j, k, next, n;
-    mwIndex *ia;
-    mwIndex *ja;
-    mwIndex *iao;
-    mwIndex *jao;
+    mw_index *ia;
+    mw_index *ja;
+    mw_index *iao;
+    mw_index *jao;
     double *a;
     double *ao;
 

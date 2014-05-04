@@ -5,8 +5,8 @@ typedef struct
 {
     int n;
     int nnz; 
-    mwIndex *ia;
-    mwIndex *ja;
+    mw_index *ia;
+    mw_index *ja;
     double *a;
 }
 csr_mat;
