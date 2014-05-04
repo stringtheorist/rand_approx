@@ -219,26 +219,18 @@ csr_mat *csr_mat_create_mm(const char *filename)
 		}
 	}
 
-
 	/*Now fill in the corresponding CSRMat structure*/
 	mat->n = N;
 	mat->nnz = nnz;
 	mat->ia = (mwIndex *) malloc(((mat->n) + 1) * sizeof(mwIndex));
 	mat->ja = (mwIndex *) malloc(nnz * sizeof(mwIndex));
 	mat->a = (double *) malloc(nnz * sizeof(double));
-	counts = (int *) malloc(mat->n * sizeof(int));
-
-
-	for (i = 0; i < mat->n; i++) {
-		counts[i] = 0;
-	}
+	counts = (int *) calloc(mat->n,  sizeof(int));
 
 	/*Set counts*/
 	for (i = 0; i < nnz; i++) {
 		counts[I[i]]++;
 	}
-
-
 
 	/* set ia pointers */
 	mat->ia[0] = 0;

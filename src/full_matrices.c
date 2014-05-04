@@ -77,10 +77,6 @@ int calculate_qr_scratch(full_matrix *mat)
 	m = mat->m;
 	n = mat->n;
 	dgeqrf_(&m, &n, mat->val, &m, &tau, &work, &lwork, &info);
-#if 0
-	printf("calculate_qr_scratch: work = %lf\n", work);
-	printf("calculate_qr_scratch: info = %d\n", info);
-#endif
 	return ((int) work);
 }
 
@@ -95,14 +91,8 @@ void compute_qr_q(full_matrix *mat, qr_scratch *qr)
 
 
 	dgeqrf_(&m, &n, mat->val, &m, qr->tau, qr->work, &(qr->lwork), &info);
-#if 0
-	printf("compute_qr_q: dgeqrf info = %d\n", info);
-#endif
 	dorgqr_(&m, &n, &n, mat->val, &m, qr->tau, qr->work, &(qr->lwork),
 			&info);
-#if 0
-	printf("compute_qr_q: dorgqr info = %d\n", info);
-#endif
 
 }
 
@@ -154,14 +144,9 @@ int compute_svd_scratch(full_matrix *mat)
 
 	dgesvd_(&jobu, &jobvt, &(mat->m), &(mat->n), mat->val, &(mat->m),
 			&s, &u, &ldu, &vt, &ldvt, &work, &lwork, &info);
-#if 0
-	printf("lwork (svd) = %d\n", (int) work);
-	printf("info (svd) = %d\n", info);
-#endif
 	return (int) work;
 }
 
-/*TODO:Test*/
 svd_scratch *init_svd_scratch(full_matrix *mat)
 {
 	svd_scratch *svd;
@@ -173,14 +158,12 @@ svd_scratch *init_svd_scratch(full_matrix *mat)
 	return svd;
 }
 
-/*TODO:Test*/
 void destroy_svd_scratch(svd_scratch *svd)
 {
 	free(svd->work);
 	free(svd);
 }
 
-/*TODO:Test*/
 void compute_svd_vals(full_matrix *mat, svd_scratch *svd, double *svals)
 {
 	char jobu = 'N';
