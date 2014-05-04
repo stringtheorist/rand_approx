@@ -3,13 +3,13 @@
 #include "wallclock.h"
 #include "global_vars.h"
 #include "arch.h"
-#include "CSRMat.h"
+#include "csr_mat.h"
 #include "full_matrices.h"
 #include "rand_range_finder.h"
 
 extern timer_struct rand_timer;
 
-void range_find(range_finder *r, CSRMat *A, CSRMat *At)
+void range_find(range_finder *r, csr_mat *A, csr_mat *At)
 {
 	int p;
 	int q;
@@ -23,14 +23,14 @@ void range_find(range_finder *r, CSRMat *A, CSRMat *At)
 
 	WALLCLOCK(time1);
 
-	CSRMatMultVecBlock(A, r->omega_mat->val, r->q_mat->val, p);
+	csr_mat_mult_vec_block(A, r->omega_mat->val, r->q_mat->val, p);
 
 	for (i = 0; i<q; i++) {
 		//At multiply
-		CSRMatMultVecBlock(At, r->q_mat->val, r->omega_mat->val, p);
+		csr_mat_mult_vec_block(At, r->q_mat->val, r->omega_mat->val, p);
 
 		//A multiply
-		CSRMatMultVecBlock(A, r->omega_mat->val, r->q_mat->val, p);
+		csr_mat_mult_vec_block(A, r->omega_mat->val, r->q_mat->val, p);
 
 	}
 

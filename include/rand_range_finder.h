@@ -10,7 +10,7 @@ typedef struct {
 } range_finder;
 
 
-void range_find(range_finder *r, CSRMat *A, CSRMat *At);
+void range_find(range_finder *r, csr_mat *A, csr_mat *At);
 range_finder *init_range_finder(int n, int p, int q);
 void destroy_range_finder(range_finder *r);
 #endif

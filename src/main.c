@@ -4,7 +4,7 @@
 #include <assert.h>
 #include "global_vars.h"
 #include "arch.h"
-#include "CSRMat.h"
+#include "csr_mat.h"
 #include <omp.h>
 #include "wallclock.h"
 #include "rand_gen.h"
@@ -21,29 +21,15 @@ int numthreads;
 void print_usage(char **argv)
 {
 	printf("Usage: %s matrix-file matrix-trans-file p q"
-			" sing-vals-file numthreads\n", argv[0]);
-}
-
-void print_2darray(FILE *fp, double *mat, int m, int n)
-{
-	int i;
-	int j;
-
-	for (i = 0; i < m; i++) {
-		for (j = 0; j < n; j++) {
-			fprintf(fp, "%lf,", mat[i + m*j]);
-		}
-		fprintf(fp, "\n");
-	}
-
+			"sing-vals-file\n", argv[0]);
 }
 
 int main(int argc, char **argv)
 {
 	int p;
 	int q;
-	CSRMat *A;
-	CSRMat *At;
+	csr_mat *A;
+	csr_mat *At;
 	range_finder *r;
 	svd_finder *svd_f;
 	double *svals;
@@ -68,7 +54,7 @@ int main(int argc, char **argv)
 
 	printf("Reading sparse matrix ... ");
 
-	A = CSRMatCreateMM(argv[1]);
+	A = csr_mat_create_mm(argv[1]);
 
 	assert(A!=NULL);
 
@@ -76,7 +62,7 @@ int main(int argc, char **argv)
 
 	printf("Reading sparse matrix transpose ... ");
 
-	At = CSRMatCreateMM(argv[2]);
+	At = csr_mat_create_mm(argv[2]);
 
 	assert(At!=NULL);
 
@@ -114,8 +100,8 @@ int main(int argc, char **argv)
 	fclose(fp);
 
 	free(svals);
-	CSRMatDestroy(A);
-	CSRMatDestroy(At);
+	csr_mat_destroy(A);
+	csr_mat_destroy(At);
 	destroy_range_finder(r);
 	destroy_svd_finder(svd_f);
 	return 0;

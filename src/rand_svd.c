@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "global_vars.h"
 #include "arch.h"
-#include "CSRMat.h"
+#include "csr_mat.h"
 #include "full_matrices.h"
 #include "rand_range_finder.h"
 #include "rand_svd.h"
@@ -10,13 +10,13 @@
 
 extern timer_struct rand_timer;
 
-void compute_svals_rand(svd_finder *svd_f, CSRMat *At, range_finder *r,
+void compute_svals_rand(svd_finder *svd_f, csr_mat *At, range_finder *r,
 		double *svals)
 {
 	double time1, time2;
 	/*Compute B' = A'*Q*/
 	WALLCLOCK(time1);
-	CSRMatMultVecBlock(At, r->q_mat->val, svd_f->Bt->val, svd_f->p);
+	csr_mat_mult_vec_block(At, r->q_mat->val, svd_f->Bt->val, svd_f->p);
 	WALLCLOCK(time2);
 	rand_timer.time_matvec += (time2 - time1);
 

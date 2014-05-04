@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "mmio.h"
-//#include "mkl.h" // mkl_cspblas_dcsrgemv
+/*#include "mkl.h"*/ /* mkl_cspblas_dcsrgemv*/
 #include "arch.h"
-#include "CSRMat.h"
+#include "csr_mat.h"
 #include "wallclock.h"
 #include <omp.h>
 
@@ -19,9 +19,9 @@ typedef enum symm_t {
 	unsymmetric,
 } symm_t;
 
-CSRMat *CSRMatCreateEmpty(int n, int nnz)
+csr_mat *csr_mat_create_empty(int n, int nnz)
 {
-	CSRMat *mat = (CSRMat *) malloc(sizeof(CSRMat));
+	csr_mat *mat = (csr_mat *) malloc(sizeof(csr_mat));
 
 	mat->n = n;
 	mat->ia = (mwIndex *) malloc((n+1)*sizeof(mwIndex));
@@ -31,9 +31,9 @@ CSRMat *CSRMatCreateEmpty(int n, int nnz)
 	return mat;
 }
 
-CSRMat *CSRMatRead(const char *filename)
+csr_mat *csr_mat_read(const char *filename)
 {
-	CSRMat *mat = (CSRMat *) malloc(sizeof(CSRMat));
+	csr_mat *mat = (csr_mat *) malloc(sizeof(csr_mat));
 
 	FILE *fp = fopen(filename, "rb");
 	if (fp == NULL)
@@ -59,11 +59,11 @@ CSRMat *CSRMatRead(const char *filename)
 	return mat;
 }
 
-// input is 1-based
-// will allocate space for matrix, therefore this is a create function
-CSRMat *CSRMatCreate(const char *filename)
+/* input is 1-based
+ * will allocate space for matrix, therefore this is a create function */
+csr_mat *csr_mat_create(const char *filename)
 {
-	CSRMat *mat = (CSRMat *) malloc(sizeof(CSRMat));
+	csr_mat *mat = (csr_mat *) malloc(sizeof(csr_mat));
 
 	char line[LINESIZE];
 	int indi, indj;
@@ -128,10 +128,10 @@ CSRMat *CSRMatCreate(const char *filename)
 	return mat;
 }
 
-CSRMat *CSRMatCreateMM(const char *filename)
+csr_mat *csr_mat_create_mm(const char *filename)
 {
 	symm_t symmetry_code;
-	CSRMat *mat;
+	csr_mat *mat;
 	int ret_code;
 	MM_typecode matcode;
 	FILE *f;
@@ -190,7 +190,7 @@ CSRMat *CSRMatCreateMM(const char *filename)
 	}
 
 
-	mat = (CSRMat *)malloc(sizeof(CSRMat));
+	mat = (csr_mat *)malloc(sizeof(csr_mat));
 
 	I = (int *) malloc(nnz * sizeof(int));
 	J = (int *) malloc(nnz * sizeof(int));
@@ -203,7 +203,6 @@ CSRMat *CSRMatCreateMM(const char *filename)
 	}
 
 	fclose(f);
-//	printf("File closed\n");
 
 	/*More annoying nonsense to be done because only unique entries
 	 * are stored by MM for symmetric matrices */
@@ -241,13 +240,13 @@ CSRMat *CSRMatCreateMM(const char *filename)
 
 
 
-	// set ia pointers
+	/* set ia pointers */
 	mat->ia[0] = 0;
 	for (i=0; i<mat->n; i++)
 	{
 		mat->ia[i+1] = mat->ia[i] + counts[i];
 		counts[i] = mat->ia[i];
-		// use counts array to point to empty space in ja array
+		/* use counts array to point to empty space in ja array*/
 	}
 	for (i = 0; i < nnz; i++) {
 		k = counts[I[i]]++;
@@ -263,7 +262,7 @@ CSRMat *CSRMatCreateMM(const char *filename)
 
 }
 
-void CSRMatDestroy(CSRMat *mat)
+void csr_mat_destroy(csr_mat *mat)
 {
 	free(mat->ia);
 	free(mat->ja);
@@ -271,7 +270,7 @@ void CSRMatDestroy(CSRMat *mat)
 	free(mat);
 }
 
-void CSRMatDump(const CSRMat *mat)
+void csr_mat_dump(const csr_mat *mat)
 {
 	const mwIndex *ia = mat->ia;
 	const mwIndex *ja = mat->ja;
@@ -285,7 +284,7 @@ void CSRMatDump(const CSRMat *mat)
 	}
 }
 
-void CSRMatMultVec(const CSRMat *mat, const double *x, double *y)
+void csr_mat_mult_vec(const csr_mat *mat, const double *x, double *y)
 {
 	const mwIndex *ia = mat->ia;
 	const mwIndex *ja = mat->ja;
@@ -303,12 +302,12 @@ void CSRMatMultVec(const CSRMat *mat, const double *x, double *y)
 	}
 }
 
-void CSRMatMultVecBlock(const CSRMat *mat, const double *x, double *y, int
+void csr_mat_mult_vec_block(const csr_mat *mat, const double *x, double *y, int
 		blk_sz)
 {
 	int i;
 	for (i = 0; i < blk_sz; i++) {
-		CSRMatMultVec(mat, &(x[i*(mat->n)]), &(y[i*(mat->n)]));
+		csr_mat_mult_vec(mat, &(x[i*(mat->n)]), &(y[i*(mat->n)]));
 	}
 }
 
@@ -363,7 +362,7 @@ void CSRMatMultVec_instru(const CSRMat *mat, const double *x, double *y)
 }
 #endif 
 
-void CSRMatTrans(CSRMat *ain, CSRMat *aout)
+void csr_mat_trans(csr_mat *ain, csr_mat *aout)
 {
     int i, j, k, next, n;
     mwIndex *ia;
@@ -381,21 +380,21 @@ void CSRMatTrans(CSRMat *ain, CSRMat *aout)
     a = ain->a;
     ao = aout->a;
 
-    // initialize
+    /* initialize */
     for (i=0; i<=n; i++)
         iao[i] = 0;
 
-    // compute lengths of rows of transpose of A
+    /* compute lengths of rows of transpose of A*/
     for (i=0; i<n; i++)
         for (k=ia[i]; k<ia[i+1]; k++)
             iao[ja[k]+1]++;
 
-    // compute pointers from lengths
+    /* compute pointers from lengths*/
     iao[0] = 0;
     for (i=0; i<n; i++)
         iao[i+1] = iao[i] + iao[i+1];
 
-    // now do the actual copying
+    /* now do the actual copying*/
     for (i=0; i<n; i++)
     {
         for (k=ia[i]; k<ia[i+1]; k++)
@@ -408,7 +407,7 @@ void CSRMatTrans(CSRMat *ain, CSRMat *aout)
         }
     }
 
-    // reshift iao into ia
+    /* reshift iao into ia*/
     for (i=n-1; i>=0; i--)
         iao[i+1] = iao[i];
     iao[0] = 0;

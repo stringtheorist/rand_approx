@@ -20,18 +20,6 @@ double unirand(double a, double b)
 	return rand() / (RAND_MAX + 1.0) * (b - a) + a;
 }
 
-/* Following implementation adapted from one available at
- * http://www.taygeta.com/random/boxmuller.html
-
-   (c) Copyright 1994, Everett F. Carter Jr.
-   Permission is granted by the author to use
-   this software for any
-   application provided this
-   copyright
-   notice
-   is
-   preserved.
-*/
 double gauss_rand(double m, double s)	/* normal random variate generator */
 {				        /* mean m, standard deviation s */
 	double x1, x2, w, y1;
